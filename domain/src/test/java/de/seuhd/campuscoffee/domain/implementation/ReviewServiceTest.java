@@ -173,4 +173,28 @@ public class ReviewServiceTest {
         // then
         assertTrue(updatedReview.approved());
     }
+
+    @Test
+    void approvalStatusNotReachedAfterPosIsApprovedByUser() {
+        //given
+        Review unapprovedReview = TestFixtures.getReviewFixtures().getFirst().toBuilder()
+                .approvalCount(approvalConfiguration.minCount()-2)
+                .approved(false)
+                .build();
+
+        User user = TestFixtures.getUserFixtures().getLast();
+        assertNotNull(user.getId());
+        assertNotNull(unapprovedReview.getId());
+
+        when(userDataService.getById(user.getId())).thenReturn(user);
+        when(reviewDataService.getById(unapprovedReview.getId())).thenReturn(unapprovedReview);
+        when(reviewDataService.upsert(any(Review.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+
+
+        Review result = reviewService.approve(unapprovedReview, user.getId());
+
+        assertThat(result.approvalCount()).isEqualTo(unapprovedReview.approvalCount() + 1);
+        assertThat(result.approved()).isFalse();
+    }
 }

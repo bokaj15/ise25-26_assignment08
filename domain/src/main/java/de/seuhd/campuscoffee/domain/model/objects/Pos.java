@@ -62,9 +62,6 @@ public record Pos (
         return id;
     }
 
-    //TODO: The validatePostalCode and validateHouseNumber methods could be replaced by bean validation
-    // annotations. This code is to demonstrate testing package-private methods and also to show an alternative
-    // to bean validation.
 
     /**
      * Validates that the POS postal code is within the allowed range of German postal codes.
